@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - Wisdom Shelter</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.6.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/login.css">
+</head>
+<body>
+    <section class="sub-header">
+        <nav>
+            <a href="index.html"><img src="images/WISDOM.png"></a>
+            <div class="nav-link" id="navLinks">
+                <i class="fa fa-times" onclick="hideMenu()"></i>
+                <ul>
+                    <li><a href="index.html"><b>Home</b></a></li>
+                    <li><a href="properties.html"><b>Properties</b></a></li>
+                    <li><a href="about.html"><b>About</b></a></li>
+                    <li><a href="index.html#services"><b>Services</b></a></li>
+                    <li><a href="index.html#contact"><b>Contact</b></a></li>
+                    <li><a href="login.html"><b>User Login</b></a></li>
+                </ul>
+            </div>
+            <i class="fa fa-bars" onclick="showMenu()"></i>
+        </nav>
+    </section>
+
+    <section class="login-content">
+        <div class="login-box" style="border-top: 5px solid #1a1a1a;">
+             <h1>Admin Portal</h1>
+            <h2>Authorized Access Only</h2>
+            
+            <form id="adminLoginForm">
+                <div class="input-group">
+                    <input type="email" id="email" placeholder="Admin Email" required>
+                </div>
+                <div class="input-group">
+                    <input type="password" id="password" placeholder="Password" required>
+                </div>
+                <button type="submit" class="hero-btn red-btn" style="border-color: #1a1a1a !important; background: #1a1a1a; color: #fff;">Admin Login</button>
+                <div class="form-footer">
+                    <p><a href="login.html">Return to User Login</a></p>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <script>
+        document.getElementById('adminLoginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const response = await fetch('http://127.0.0.1:5000/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    if (data.role !== 'admin') {
+                        alert("Access Denied: Not an admin account.");
+                        return;
+                    }
+                    localStorage.setItem('user', JSON.stringify(data));
+                    window.location.href = 'admin-dashboard.html';
+                } else {
+                    alert(data.error || "Login failed");
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                alert("Could not connect to the server.");
+            }
+        });
+    </script>
+
+    <footer class="footer">
+        <div class="footer-bottom">
+            <p>&copy; 2026 Wisdom Shelter. Admin Panel.</p>
+        </div>
+    </footer>
+    <script src="js/script.js"></script>
+</body>
+</html>
